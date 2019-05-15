@@ -199,6 +199,10 @@ void initClocks(){
   for(int i = 0; i < clockX.length; i++){
     clockX[i] = SOIL_SIZE * floor(random(SOIL_COL_COUNT));
     clockY[i] = SOIL_SIZE * ( i * 4 + floor(random(4)));
+    if (clockX[i] == cabbageX[i] && clockY[i] ==cabbageY[i]){
+    clockX[i] = SOIL_SIZE * floor(random(SOIL_COL_COUNT));
+    clockY[i] = SOIL_SIZE * ( i * 4 + floor(random(4)));
+    }
   }
 }
 
@@ -313,7 +317,7 @@ void draw() {
       if(playerHealth < PLAYER_MAX_HEALTH
          && isHit(playerX, playerY, SOIL_SIZE, SOIL_SIZE, clockX[i], clockY[i], SOIL_SIZE, SOIL_SIZE) ){
            
-        addTime(15);
+        addTime(900);
         clockX[i] = clockY[i] = -1000;
 
       }
@@ -461,7 +465,7 @@ void draw() {
 		}
 
 		// Requirement #6:
-		//   Call drawCaution() to draw caution sign
+		drawCaution();
 
 		popMatrix();
 
@@ -549,8 +553,23 @@ void drawTimerUI(){
 	text(timeString, 3, height + 3);
 
 	// Actual Time Text
-	//color timeTextColor = #ffffff; 		// Requirement #5: Get the correct color using color getTimeTextColor(int frames)
-	fill( getTimeTextColor(gameTimer));
+
+  if(gameTimer >= 7200){
+     fill( #00ffff);
+  }
+  if(gameTimer < 7200 && gameTimer >= 3600){
+      fill( #ffffff);
+  }
+  if(gameTimer < 3600 && gameTimer >= 1800){
+      fill( #ffcc00);
+  }
+  if(gameTimer < 1800 && gameTimer >= 600){
+      fill( #ff6600);
+  }
+  if(gameTimer < 600){
+      fill( #ff0000);
+   }
+
 	text(timeString, 0, height);
 }
 
@@ -569,23 +588,29 @@ boolean isHit(float ax, float ay, float aw, float ah, float bx, float by, float 
 }
 
 String convertFramesToTimeString(int frames){	// Requirement #4
-	return nf(floor(gameTimer/60), 2);
+
+	return (nf(floor(frames/3600), 2))+":"+(nf(int(frames/120), 2));
 }
 
-color getTimeTextColor (int frames){				// Requirement #5
-  return #00ffff;
-  }
+//color getTimeTextColor (int frames){				// Requirement #5
+
+  //}
 
 
-int getEnemyIndexByRow(int row){				// Requirement #6
+//int getEnemyIndexByRow(int row){				// Requirement #6
 
 		// HINT:
 		// - If there's a soldier in that row, return that soldier's index in soldierX/soldierY
 		// (for example, if soldierY[3] is in that row, return 3)
 		// - Return -1 if there's no soldier in that row
-
-	return -1;
-}
+   // for(int i = 0; i < soldierX.length; i++){
+   //   if (soldierY[i] == row){
+	 //   return (i);
+    //  }else{
+    //    return (-1);
+    //  }
+ // }
+//}
 
 void drawCaution(){								// Requirement #6
 
