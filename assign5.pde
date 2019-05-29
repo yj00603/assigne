@@ -298,7 +298,8 @@ void draw() {
 			image(cabbage, cabbageX[i], cabbageY[i]);
 
 			// Requirement #3: Use boolean isHit(...) to detect collision
-			if(isHit(playerX, playerY, SOIL_SIZE, SOIL_SIZE, cabbageX[i], cabbageY[i], SOIL_SIZE, SOIL_SIZE) ){
+			if(playerHealth < PLAYER_MAX_HEALTH
+         && isHit(playerX, playerY, SOIL_SIZE, SOIL_SIZE, cabbageX[i], cabbageY[i], SOIL_SIZE, SOIL_SIZE) ){
 
 				playerHealth ++;
 				cabbageX[i] = cabbageY[i] = -1000;
@@ -314,10 +315,9 @@ void draw() {
       image(clock, clockX[i], clockY[i]);
 
       // --- Requirement #3: Use boolean isHit(...) to detect clock <-> player collision
-      if(playerHealth < PLAYER_MAX_HEALTH
-         && isHit(playerX, playerY, SOIL_SIZE, SOIL_SIZE, clockX[i], clockY[i], SOIL_SIZE, SOIL_SIZE) ){
+      if(isHit(playerX, playerY, SOIL_SIZE, SOIL_SIZE, clockX[i], clockY[i], SOIL_SIZE, SOIL_SIZE) ){
            
-        addTime(900);
+        addTime(15);
         clockX[i] = clockY[i] = -1000;
 
       }
@@ -544,39 +544,20 @@ void drawDepthUI(){
 }
 
 void drawTimerUI(){
-	String timeString = convertFramesToTimeString(gameTimer); // Requirement #4: Get the mm:ss string using String convertFramesToTimeString(int frames)
+	String timeString = convertFrameToTimeString(gameTimer); // Requirement #4: Get the mm:ss string using String convertFramesToTimeString(int frames)
 
 	textAlign(LEFT, BOTTOM);
 
 	// Time Text Shadow Effect - You don't have to change this!
 	fill(0, 120);
 	text(timeString, 3, height + 3);
-
+  fill(getTimeTextColor(gameTimer));
 	// Actual Time Text
-
-  if(gameTimer >= 7200){
-     fill( #00ffff);
-  }
-  if(gameTimer < 7200 && gameTimer >= 3600){
-      fill( #ffffff);
-  }
-  if(gameTimer < 3600 && gameTimer >= 1800){
-      fill( #ffcc00);
-  }
-  if(gameTimer < 1800 && gameTimer >= 600){
-      fill( #ff6600);
-  }
-  if(gameTimer < 600){
-      fill( #ff0000);
-   }
-
 	text(timeString, 0, height);
 }
 
 void addTime(float seconds){					// Requirement #2
- playerMoveDuration = 60;
- convertFramesToTimeString(60);
- gameTimer +=seconds ;
+ gameTimer += round(seconds * 60);
 }
 
 boolean isHit(float ax, float ay, float aw, float ah, float bx, float by, float bw, float bh){
@@ -587,12 +568,29 @@ boolean isHit(float ax, float ay, float aw, float ah, float bx, float by, float 
           ay < by + bh;								
 }
 
-String convertFramesToTimeString(int frames){	// Requirement #4
+String convertFrameToTimeString(int frames){
+  String result = "";
+  float totalSeconds = float(frames) / 60;
+  result += nf(floor(totalSeconds/60), 2);
+  result += ":";
+  result += nf(floor(totalSeconds%60), 2);
+  return result;
+}	// Requirement #4
 
-	return (nf(floor(frames/3600), 2))+":"+(nf(int(frames/120), 2));
-}
 
-//color getTimeTextColor (int frames){				// Requirement #5
+
+color getTimeTextColor(int frames){
+  if(frames >= 7200){
+    return #00ffff;
+  }else if(frames >= 3600){
+    return #ffffff;
+  }else if(frames >= 1800){
+    return #ffcc00;
+  }else if(frames >= 600){
+    return #ff6600;
+  }
+  return #ff0000;
+}				// Requirement #5
 
   //}
 
